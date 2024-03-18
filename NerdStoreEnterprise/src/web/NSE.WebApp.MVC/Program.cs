@@ -1,24 +1,29 @@
+using NSE.WebApp.MVC.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+#region Configurando para que a aplicação execute em ambientes distintos, utilizando appsettings distintos para cada ambiente
+
+builder.Configuration.SetBasePath(Directory.GetCurrentDirectory());
+builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+builder.Configuration.AddEnvironmentVariables();
+
+if (builder.Environment.Equals("Development"))
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
+
+#endregion
+
+builder.Services.AddIdentityConfiguration();
+builder.Services.AddMvcConfiguration(builder.Configuration);
+
+builder.Services.RegisterServices();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthorization();
+app.UseMvcConfiguration(app.Environment);
 
 app.MapControllerRoute(
     name: "default",
