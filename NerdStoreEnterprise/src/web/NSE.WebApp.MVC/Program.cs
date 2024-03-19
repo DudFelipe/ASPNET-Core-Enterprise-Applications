@@ -19,7 +19,7 @@ if (builder.Environment.Equals("Development"))
 builder.Services.AddIdentityConfiguration();
 builder.Services.AddMvcConfiguration(builder.Configuration);
 
-builder.Services.RegisterServices();
+builder.Services.RegisterServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -27,6 +27,6 @@ app.UseMvcConfiguration(app.Environment);
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Catalogo}/{action=Index}/{id?}");
 
 app.Run();

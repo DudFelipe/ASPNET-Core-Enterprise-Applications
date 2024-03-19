@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using NSE.Identidade.API.Data;
 using NSE.Identidade.API.Extensions;
-using System.Text;
+using NSE.WebApi.Core.Identidade;
 
 namespace NSE.Identidade.API.Configuration
 {
@@ -26,45 +24,9 @@ namespace NSE.Identidade.API.Configuration
                 .AddDefaultTokenProviders() //Tokens para confirmação de email, reset de senha, etc
                 .AddErrorDescriber<IdentityMensagensPortugues>(); //Utilizando mensagens em português no identity
 
-            #region JWT
-
-            var appSettingsSection = configuration.GetSection("AppSettings");//Obtendo a seção AppSettings do arquivo appsettings.json
-            services.Configure<AppSettings>(appSettingsSection); //Informando que a seção AppSettings será mapeada para a classe AppSettings
-
-            var appSettings = appSettingsSection.Get<AppSettings>(); //Criando uma instancia da classe AppSettings
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret); //Obtendo a chave de criptografia
-
-            //Configurando o schema de autenticação
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(bearerOptions =>
-            {
-                bearerOptions.RequireHttpsMetadata = true;
-                bearerOptions.SaveToken = true;
-                bearerOptions.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidAudience = appSettings.ValidoEm,
-                    ValidIssuer = appSettings.Emissor
-                };
-            });
-
-            #endregion
+            services.AddJwtConfiguration(configuration);
 
             return services;
-        }
-
-        public static IApplicationBuilder UseIdentityConfiguration(this IApplicationBuilder app)
-        {
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            return app;
         }
     }
 }
