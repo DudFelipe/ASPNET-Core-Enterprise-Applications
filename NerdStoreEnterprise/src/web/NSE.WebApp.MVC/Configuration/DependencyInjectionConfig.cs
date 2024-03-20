@@ -1,4 +1,5 @@
-﻿using NSE.WebApp.MVC.Extensions;
+﻿using Microsoft.AspNetCore.Mvc.DataAnnotations;
+using NSE.WebApp.MVC.Extensions;
 using NSE.WebApp.MVC.Services;
 using NSE.WebApp.MVC.Services.Handlers;
 using Polly;
@@ -11,6 +12,7 @@ namespace NSE.WebApp.MVC.Configuration
     {
         public static IServiceCollection RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddSingleton<IValidationAttributeAdapterProvider, CpfValidationAttributeAdapterProvider>();
             services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 
             //Registrando o serviço de autenticação como um HttpClient
