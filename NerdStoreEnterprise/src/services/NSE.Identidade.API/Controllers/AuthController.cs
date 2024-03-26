@@ -2,10 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using NSE.Core.Messages.Integration;
 using NSE.Identidade.API.Models;
+using NSE.MessageBus;
 using NSE.WebApi.Core.Controllers;
 using NSE.WebApi.Core.Identidade;
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Text;
 
@@ -18,12 +21,16 @@ namespace NSE.Identidade.API.Controllers
         private readonly UserManager<IdentityUser> _userManager; //Gerenciador de usuário
         private readonly AppSettings _appSettings;
 
-        public AuthController(SignInManager<IdentityUser> signInManager, 
+        private readonly IMessageBus _bus;
+
+        public AuthController(SignInManager<IdentityUser> signInManager,
                               UserManager<IdentityUser> userManager,
+                              IMessageBus bus,
                               IOptions<AppSettings> appSettings) //IOptions é uma forma de injetar configurações vindas do appsettings.json
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _bus = bus;
             _appSettings = appSettings.Value;
         }
 
@@ -43,6 +50,14 @@ namespace NSE.Identidade.API.Controllers
 
             if(result.Succeeded)
             {
+                var clienteResult = await RegistrarCliente(usuarioRegistro);
+
+                if (!clienteResult.ValidationResult.IsValid)
+                {
+                    await _userManager.DeleteAsync(user);
+                    return CustomResponse(clienteResult.ValidationResult);
+                }
+
                 return CustomResponse(await GerarJwt(usuarioRegistro.Email));
             }
 
@@ -141,5 +156,26 @@ namespace NSE.Identidade.API.Controllers
 
         private static long ToUnixEpochDate(DateTime date)
             => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
+
+        private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistro usuarioRegistro)
+        {
+            //Resgata o usuario registrado no banco
+            var usuario = await _userManager.FindByEmailAsync(usuarioRegistro.Email);
+
+            var usuarioRegistradoEvent = new UsuarioRegistradoIntegrationEvent(Guid.Parse(usuario.Id),
+                                                                                usuarioRegistro.Nome,
+                                                                                usuarioRegistro.Email,
+                                                                                usuarioRegistro.Cpf);
+
+            try
+            {
+                return await _bus.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistradoEvent);
+            }
+            catch
+            {
+                await _userManager.DeleteAsync(usuario);
+                throw;
+            }
+        }
     }
 }

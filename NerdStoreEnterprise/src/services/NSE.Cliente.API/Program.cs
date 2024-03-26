@@ -1,7 +1,6 @@
-using Microsoft.Extensions.DependencyInjection;
-using NSE.Catalogo.API.Configuration;
+using NSE.Cliente.API.Configuration;
+using NSE.Cliente.API.Services;
 using NSE.WebApi.Core.Identidade;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,8 +23,12 @@ builder.Services.AddJwtConfiguration(builder.Configuration);
 builder.Services.AddSwaggerConfiguration();
 builder.Services.AddMediatR(c => c.RegisterServicesFromAssembly(typeof(Program).Assembly));
 builder.Services.RegisterServices();
+builder.Services.AddMessageBusConfiguration(builder.Configuration);
 
 var app = builder.Build();
+
+var service = app.Services.GetService<RegistroClienteIntegrationHandler>();
+service.SetResponder();
 
 app.UseSwaggerConfiguration();
 app.UseApiConfiguration(app.Environment);

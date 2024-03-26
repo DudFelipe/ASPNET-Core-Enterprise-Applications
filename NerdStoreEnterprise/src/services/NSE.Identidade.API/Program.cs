@@ -19,6 +19,7 @@ if(builder.Environment.Equals("Development"))
 builder.Services.AddIdentityConfiguration(builder.Configuration);
 builder.Services.AddApiConfiguration();
 builder.Services.AddSwaggerConfiguration();
+builder.Services.AddMessageBusConfiguration(builder.Configuration);
 
 
 var app = builder.Build();

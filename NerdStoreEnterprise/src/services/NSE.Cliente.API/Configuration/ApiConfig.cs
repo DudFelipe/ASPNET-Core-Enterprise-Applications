@@ -2,7 +2,7 @@
 using NSE.Cliente.API.Data;
 using NSE.WebApi.Core.Identidade;
 
-namespace NSE.Catalogo.API.Configuration
+namespace NSE.Cliente.API.Configuration
 {
     public static class ApiConfig
     {
@@ -39,7 +39,7 @@ namespace NSE.Catalogo.API.Configuration
             app.UseCors("Total");
 
             app.UseAuthConfiguration();
-            
+
         }
     }
 }
