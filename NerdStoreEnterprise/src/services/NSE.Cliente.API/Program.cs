@@ -1,5 +1,4 @@
 using NSE.Cliente.API.Configuration;
-using NSE.Cliente.API.Services;
 using NSE.WebApi.Core.Identidade;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,9 +25,6 @@ builder.Services.RegisterServices();
 builder.Services.AddMessageBusConfiguration(builder.Configuration);
 
 var app = builder.Build();
-
-var service = app.Services.GetService<RegistroClienteIntegrationHandler>();
-service.SetResponder();
 
 app.UseSwaggerConfiguration();
 app.UseApiConfiguration(app.Environment);

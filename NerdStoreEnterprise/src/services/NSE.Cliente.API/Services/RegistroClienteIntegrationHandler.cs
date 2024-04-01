@@ -17,19 +17,18 @@ namespace NSE.Cliente.API.Services
             _bus = bus;
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            SetResponder();
-
-            return Task.CompletedTask;
-        }
-
-        public void SetResponder()
+        private void SetResponder()
         {
             _bus.RespondAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(
                 RegistrarCliente);
 
             _bus.AdvancedBus.Connected += OnConnect;
+        }
+
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            SetResponder();
+            return Task.CompletedTask;
         }
 
         private void OnConnect(object s, EventArgs e)

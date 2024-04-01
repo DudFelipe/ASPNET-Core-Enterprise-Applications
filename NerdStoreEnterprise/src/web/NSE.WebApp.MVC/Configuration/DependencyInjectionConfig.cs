@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.DataAnnotations;
+using NSE.WebApi.Core.Usuario;
 using NSE.WebApp.MVC.Extensions;
 using NSE.WebApp.MVC.Services;
 using NSE.WebApp.MVC.Services.Handlers;
@@ -13,15 +14,30 @@ namespace NSE.WebApp.MVC.Configuration
         public static IServiceCollection RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddSingleton<IValidationAttributeAdapterProvider, CpfValidationAttributeAdapterProvider>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IAspNetUser, AspNetUser>();
+
+            #region HttpServices
+
             services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 
             //Registrando o serviço de autenticação como um HttpClient
-            services.AddHttpClient<IAutenticacaoService, AutenticacaoService>();
+            services.AddHttpClient<IAutenticacaoService, AutenticacaoService>()
+                .AddPolicyHandler(PollyExtensions.EsperarTentar())
+                .AddTransientHttpErrorPolicy(
+                    p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
             services.AddHttpClient<ICatalogoService, CatalogoService>()
                 .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>() //Adicionando o delegating handler para manipular o request e passar o JWT quando existir
                 .AddPolicyHandler(PollyExtensions.EsperarTentar()) //Adicionando um retry policy para tentar 3 vezes antes de retornar erro
                 .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30))); //Adicionando um circuit breaker para abrir o circuito por 30 segundos caso ocorra 5 falhas seguidas
+
+            services.AddHttpClient<ICarrinhoService, CarrinhoService>()
+                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>() //Adicionando o delegating handler para manipular o request e passar o JWT quando existir
+                .AddPolicyHandler(PollyExtensions.EsperarTentar()) //Adicionando um retry policy para tentar 3 vezes antes de retornar erro
+                .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30))); //Adicionando um circuit breaker para abrir o circuito por 30 segundos caso ocorra 5 falhas seguidas
+
+            #endregion
 
             #region Exemplo de implementação do Refit
 
@@ -33,10 +49,6 @@ namespace NSE.WebApp.MVC.Configuration
             //.AddTypedClient(Refit.RestService.For<ICatalogoServiceRefit>); //Registrando o serviço de catálogo como um HttpClient usando Refit
 
             #endregion
-
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-            services.AddScoped<IUser, AspNetUser>();
 
             return services;
         }

@@ -42,5 +42,10 @@ namespace NSE.WebApp.MVC.Services
             response.EnsureSuccessStatusCode(); //Garantir que seja um retorno de sucesso como código 200 ou 201 por exemplo
             return true;
         }
+
+        protected ResponseResult RetornoOk()
+        {
+            return new ResponseResult();
+        }
     }
 }
