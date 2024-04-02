@@ -1,11 +1,9 @@
-﻿using Microsoft.Extensions.Options;
-using NSE.Core.Communication;
-using NSE.WebApp.MVC.Extensions;
-using NSE.WebApp.MVC.Models;
+﻿using NSE.Core.Communication;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 
-namespace NSE.WebApp.MVC.Services
+namespace NSE.Bff.Compras.Services
 {
     public abstract class Service
     {
@@ -29,16 +27,8 @@ namespace NSE.WebApp.MVC.Services
 
         protected bool TratarErrorResponse(HttpResponseMessage response)
         {
-            switch((int)response.StatusCode)
-            {
-                case 401:
-                case 403:
-                case 404:
-                case 500:
-                    throw new CustomHttpRequestException(response.StatusCode);
-                case 400:
-                    return false;
-            }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+                return false;
 
             response.EnsureSuccessStatusCode(); //Garantir que seja um retorno de sucesso como código 200 ou 201 por exemplo
             return true;
