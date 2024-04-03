@@ -97,6 +97,21 @@ namespace NSE.Carrinho.API.Controllers
                 .FirstOrDefaultAsync(c => c.ClienteId == _user.ObterUserId());
         }
 
+        [HttpPost]
+        [Route("carrinho/aplicar-voucher")]
+        public async Task<IActionResult> AplicarVoucher(Voucher voucher)
+        {
+            var carrinho = await ObterCarrinhoCliente();
+
+            carrinho.AplicarVoucher(voucher);
+
+            _context.CarrinhoCliente.Update(carrinho);
+
+            await PersistirDados();
+            return CustomResponse();
+        }
+
+
         private void ManipularNovoCarrinho(CarrinhoItem item)
         {
             var carrinho = new CarrinhoCliente(_user.ObterUserId());
@@ -106,7 +121,6 @@ namespace NSE.Carrinho.API.Controllers
 
             _context.CarrinhoCliente.Add(carrinho);
         }
-
         private void ManipularCarrinhoExistente(CarrinhoCliente carrinho, CarrinhoItem item) 
         {
             var produtoItemExistente = carrinho.CarrinhoItemExistente(item);
@@ -121,7 +135,6 @@ namespace NSE.Carrinho.API.Controllers
 
             _context.CarrinhoCliente.Update(carrinho);
         }
-
         private async Task<CarrinhoItem> ObterItemCarrinhoValidado(Guid produtoId, CarrinhoCliente carrinho, CarrinhoItem? item = null)
         {
             if(item != null && produtoId != item.ProdutoId)
@@ -146,7 +159,6 @@ namespace NSE.Carrinho.API.Controllers
 
             return itemCarrinho;
         }
-
         private async Task PersistirDados()
         {
             var result = await _context.SaveChangesAsync();
