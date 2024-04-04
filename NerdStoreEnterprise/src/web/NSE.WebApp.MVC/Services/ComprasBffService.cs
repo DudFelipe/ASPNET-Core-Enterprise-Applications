@@ -15,6 +15,8 @@ namespace NSE.WebApp.MVC.Services
             _httpClient.BaseAddress = new Uri(settings.Value.ComprasBffUrl);
         }
 
+        #region Carrinho
+
         public async Task<CarrinhoViewModel> ObterCarrinho()
         {
             var response = await _httpClient.GetAsync("/compras/carrinho/");
@@ -37,7 +39,6 @@ namespace NSE.WebApp.MVC.Services
 
             var response = await _httpClient.PostAsync("/compras/carrinho/items/", itemContent);
 
-            
             if (!TratarErrorResponse(response)) return await DeserializarObjetoResponse<ResponseResult>(response);
 
             return RetornoOk();
@@ -60,17 +61,78 @@ namespace NSE.WebApp.MVC.Services
 
             return RetornoOk();
         }
-
         public async Task<ResponseResult> AplicarVoucherCarrinho(string voucher)
         {
             var itemContent = ObterConteudo(voucher);
 
             var response = await _httpClient.PostAsync("/compras/carrinho/aplicar-voucher/", itemContent);
 
-            if (!TratarErrorResponse(response))
-                return await DeserializarObjetoResponse<ResponseResult>(response);
+            if (!TratarErrorResponse(response)) return await DeserializarObjetoResponse<ResponseResult>(response);
 
             return RetornoOk();
         }
+
+        #endregion
+
+        #region Pedido
+
+        public async Task<ResponseResult> FinalizarPedido(PedidoTransacaoViewModel pedidoTransacao)
+        {
+            var pedidoContent = ObterConteudo(pedidoTransacao);
+
+            var response = await _httpClient.PostAsync("/compras/pedido/", pedidoContent);
+
+            if (!TratarErrorResponse(response)) return await DeserializarObjetoResponse<ResponseResult>(response);
+
+            return RetornoOk();
+        }
+
+        public async Task<PedidoViewModel> ObterUltimoPedido()
+        {
+            var response = await _httpClient.GetAsync("/compras/pedido/ultimo/");
+
+            TratarErrorResponse(response);
+
+            return await DeserializarObjetoResponse<PedidoViewModel>(response);
+        }
+
+        public async Task<IEnumerable<PedidoViewModel>> ObterListaPorClienteId()
+        {
+            var response = await _httpClient.GetAsync("/compras/pedido/lista-cliente/");
+
+            TratarErrorResponse(response);
+
+            return await DeserializarObjetoResponse<IEnumerable<PedidoViewModel>>(response);
+        }
+
+        public PedidoTransacaoViewModel MapearParaPedido(CarrinhoViewModel carrinho, EnderecoViewModel endereco)
+        {
+            var pedido = new PedidoTransacaoViewModel
+            {
+                ValorTotal = carrinho.ValorTotal,
+                Itens = carrinho.Itens,
+                Desconto = carrinho.Desconto,
+                VoucherUtilizado = carrinho.VoucherUtilizado,
+                VoucherCodigo = carrinho.Voucher?.Codigo
+            };
+
+            if (endereco != null)
+            {
+                pedido.Endereco = new EnderecoViewModel
+                {
+                    Logradouro = endereco.Logradouro,
+                    Numero = endereco.Numero,
+                    Bairro = endereco.Bairro,
+                    Cep = endereco.Cep,
+                    Complemento = endereco.Complemento,
+                    Cidade = endereco.Cidade,
+                    Estado = endereco.Estado
+                };
+            }
+
+            return pedido;
+        }
+
+        #endregion
     }
 }

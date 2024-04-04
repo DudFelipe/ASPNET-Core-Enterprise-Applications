@@ -37,6 +37,11 @@ namespace NSE.WebApp.MVC.Configuration
                 .AddPolicyHandler(PollyExtensions.EsperarTentar()) //Adicionando um retry policy para tentar 3 vezes antes de retornar erro
                 .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30))); //Adicionando um circuit breaker para abrir o circuito por 30 segundos caso ocorra 5 falhas seguidas
 
+            services.AddHttpClient<IClienteService, ClienteService>()
+                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>() //Adicionando o delegating handler para manipular o request e passar o JWT quando existir
+                .AddPolicyHandler(PollyExtensions.EsperarTentar()) //Adicionando um retry policy para tentar 3 vezes antes de retornar erro
+                .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30))); //Adicionando um circuit breaker para abrir o circuito por 30 segundos caso ocorra 5 falhas seguidas
+
             #endregion
 
             #region Exemplo de implementação do Refit

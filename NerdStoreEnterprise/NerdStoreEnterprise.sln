@@ -57,9 +57,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Compras", "Compras", "{E432
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NSE.Bff.Compras", "src\api gateways\NSE.Bff.Compras\NSE.Bff.Compras.csproj", "{8111D0B6-2537-4191-B110-BC5138F327CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSE.Pedidos.Domain", "src\services\NSE.Pedidos.Domain\NSE.Pedidos.Domain.csproj", "{8652B006-92D0-4A82-A9ED-AA7EDF98D0BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NSE.Pedidos.Domain", "src\services\NSE.Pedidos.Domain\NSE.Pedidos.Domain.csproj", "{8652B006-92D0-4A82-A9ED-AA7EDF98D0BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSE.Pedidos.Infra", "src\services\NSE.Pedidos.Infra\NSE.Pedidos.Infra.csproj", "{1D7BB686-6E10-4588-B320-49AB964F4AEF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NSE.Pedidos.Infra", "src\services\NSE.Pedidos.Infra\NSE.Pedidos.Infra.csproj", "{1D7BB686-6E10-4588-B320-49AB964F4AEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

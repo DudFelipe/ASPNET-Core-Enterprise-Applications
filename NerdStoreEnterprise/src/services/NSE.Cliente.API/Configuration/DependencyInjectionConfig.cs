@@ -16,6 +16,7 @@ namespace NSE.Cliente.API.Configuration
         {
             services.AddScoped<IMediatorHandler, MediatorHandler>();
             services.AddScoped<IRequestHandler<RegistrarClienteCommand, ValidationResult>, ClienteCommandHandler>();
+            services.AddScoped<IRequestHandler<AdicionarEnderecoCommand, ValidationResult>, ClienteCommandHandler>();
             services.AddScoped<INotificationHandler<ClienteRegistradoEvent>, ClientEventHandler>();
 
             services.AddScoped<IClienteRepository, ClienteRepository>();

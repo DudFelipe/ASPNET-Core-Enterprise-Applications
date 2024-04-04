@@ -7,5 +7,7 @@ namespace NSE.Cliente.API.Models
         void Adicionar(Cliente cliente);
         Task<IEnumerable<Cliente>> ObterTodos();
         Task<Cliente?> ObterPorCpf(string cpf);
+        Task<Endereco> ObterEnderecoPorId(Guid id);
+        void AdicionarEndereco(Endereco endereco);
     }
 }
