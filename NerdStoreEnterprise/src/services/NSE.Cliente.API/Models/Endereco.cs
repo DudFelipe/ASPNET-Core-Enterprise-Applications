@@ -34,10 +34,5 @@ namespace NSE.Cliente.API.Models
             Estado = estado;
             ClienteId = clienteId;
         }
-
-        public Endereco()
-        {
-            
-        }
     }
 }

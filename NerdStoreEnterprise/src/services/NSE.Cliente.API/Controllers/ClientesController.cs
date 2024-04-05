@@ -24,7 +24,7 @@ namespace NSE.Cliente.API.Controllers
         public async Task<ActionResult> ObterEndereco()
         {
             var endereco = await _clienteRepository.ObterEnderecoPorId(_user.ObterUserId());
-            return endereco == null ? NotFound() : CustomResponse(endereco);
+            return endereco is null ? NotFound() : CustomResponse(endereco);
         }
 
         [HttpPost("cliente/endereco")]

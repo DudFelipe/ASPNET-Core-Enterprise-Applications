@@ -5,8 +5,8 @@ using NSE.Cliente.API.Application.Events;
 using NSE.Cliente.API.Data;
 using NSE.Cliente.API.Data.Repositories;
 using NSE.Cliente.API.Models;
-using NSE.Cliente.API.Services;
 using NSE.Core.Mediator;
+using NSE.WebApi.Core.Usuario;
 
 namespace NSE.Cliente.API.Configuration
 {
@@ -21,6 +21,9 @@ namespace NSE.Cliente.API.Configuration
 
             services.AddScoped<IClienteRepository, ClienteRepository>();
             services.AddScoped<ClientesContext>();
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IAspNetUser, AspNetUser>();
         }
     }
 }

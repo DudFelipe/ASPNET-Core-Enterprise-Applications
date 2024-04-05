@@ -21,16 +21,16 @@ namespace NSE.Bff.Compras.Models
         public decimal ValorTotal { get; set; }
 
         public decimal Desconto { get; set; }
-        public string VoucherCodigo { get; set; }
+        public string? VoucherCodigo { get; set; }
         public bool VoucherUtilizado { get; set; }
 
-        public List<ItemCarrinhoDTO> PedidoItems { get; set; }
+        public List<ItemCarrinhoDTO>? PedidoItems { get; set; }
 
         #endregion
 
         #region Endereco
 
-        public EnderecoDTO Endereco { get; set; }
+        public EnderecoDTO? Endereco { get; set; }
 
         #endregion
 

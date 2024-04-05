@@ -19,6 +19,8 @@ namespace NSE.Pedidos.Domain.Pedidos
             Desconto = desconto;
             VoucherUtilizado = voucherUtilizado;
             VoucherId = voucherId;
+
+            DataCadastro = DateTime.Now;
         }
 
         protected Pedido() { }

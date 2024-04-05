@@ -10,7 +10,7 @@ namespace NSE.WebApp.MVC.Models
 
         public decimal ValorTotal { get; set; }
         public decimal Desconto { get; set; }
-        public string VoucherCodigo { get; set; }
+        public string? VoucherCodigo { get; set; }
         public bool VoucherUtilizado { get; set; }
 
         public List<ItemCarrinhoViewModel> Itens { get; set; } = new List<ItemCarrinhoViewModel>();
@@ -19,7 +19,7 @@ namespace NSE.WebApp.MVC.Models
 
         #region Endereco
 
-        public EnderecoViewModel Endereco { get; set; }
+        public EnderecoViewModel? Endereco { get; set; }
 
         #endregion
 
